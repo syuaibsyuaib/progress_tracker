@@ -17,3 +17,30 @@ This project is a Flutter application that tracks user progress. It includes bot
 gscript: https://script.google.com/macros/s/AKfycbxlZW3AxOBaTcPlZCNgFZaI4fMS4nDh2ESv7ujRkDLPz9AZxhNwLduQkbV2YP4iQ3pImw/exec
 github pages (user): https://syuaibsyuaib.github.io/progress_tracker/user.html
 github pages (admin): https://syuaibsyuaib.github.io/progress_tracker/index.html
+
+# ID Spreadsheet
+1GytHkptBkFUzEqul7EmJIH07bEeMastwsZM_DXrVQVM
+
+# Model kolom progres
+The model for the progress entries includes the following columns:
+- **NOMOR**: Nomor urut entri progres, biasanya berupa angka berurutan.
+- **ID**: Identifikasi unik untuk setiap entri progres, sering kali berupa string atau angka.
+- **ID_USER**: Identifikasi unik pengguna yang membuat entri progres, digunakan untuk mengaitkan entri dengan pengguna tertentu.
+- **ID_PROGRES**: Identifikasi unik untuk entri progres tertentu, digunakan untuk mengaitkan entri dengan jenis progres yang spesifik.
+- **ID_KATEGORI**: Identifikasi unik untuk kategori progres, digunakan untuk mengelompokkan entri progres berdasarkan kategori tertentu.
+- **NIP**: Nomor Induk Pegawai, digunakan untuk identifikasi pegawai.
+- **NAMA**: Nama pegawai atau entitas yang sedang dilacak.
+- **TANGGAL**: Tanggal terkait dengan entri progres.
+- **KINERJA**: Deskripsi atau nilai kinerja yang dicapai.
+- **BOBOT**: Bobot atau nilai yang diberikan untuk kinerja tersebut.
+- **STATUS**: Status dari entri progres, misalnya "Selesai", "Dalam Proses", atau "Ditolak".
+- **KETERANGAN**: Penjelasan tambahan mengenai entri progres.
+
+# model kolom user
+The model for the user entries includes the following columns:
+- **ID**: Identifikasi unik untuk setiap pengguna, sering kali berupa string atau angka.
+- **USERNAME**: Nama pengguna yang digunakan untuk login.
+- **PASSWORD**: Kata sandi yang digunakan untuk autentikasi pengguna.
+- **NIP**: Nomor Induk Pegawai, digunakan untuk identifikasi pegawai.
+- **NAMA**: Nama lengkap pengguna.
+- **ROLE**: Peran pengguna dalam sistem, misalnya "admin" atau "user".
