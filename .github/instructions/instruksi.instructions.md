@@ -5,6 +5,9 @@ Provide project context and coding guidelines that AI should follow when generat
 
 # Project Context
 This project is a Flutter application that tracks user progress. It includes both a user interface and backend functionality. The application is designed to be run on multiple platforms, including web and Android.
+The backend is implemented using Google Apps Script, which interacts with a Google Spreadsheet to store and retrieve user progress data. The application allows users to input their progress and view it in a structured format.
+The project also includes a GitHub repository for version control and collaboration.
+user interface is built using Flutter webview where url for user is https://syuaibsyuaib.github.io/progress_tracker/user.html
 
 # Coding Guidelines
 1. **Code Structure**: Organize code into modules and components for better maintainability.
