@@ -44,3 +44,10 @@ The model for the user entries includes the following columns:
 - **NIP**: Nomor Induk Pegawai, digunakan untuk identifikasi pegawai.
 - **NAMA**: Nama lengkap pengguna.
 - **ROLE**: Peran pengguna dalam sistem, misalnya "admin" atau "user".
+
+# additional instructions
+- Ensure that all API calls are properly authenticated.
+- Validate all user inputs on both client and server sides.
+- Implement error handling for network requests.
+- Write unit tests for all new features and bug fixes.
+- auto commit and push changes to the repository after completing tasks.
