@@ -5,20 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Progress Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 2em;
+      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+      color: #222;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2em 2em 1.5em 2em;
+    }
+    h1 {
+      text-align: center;
+      color: #2563eb;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1em;
+      background: #f9fafb;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    th, td {
+      border: none;
+      padding: 12px 10px;
+      text-align: left;
+    }
+    th {
+      background: #2563eb;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:nth-child(even) { background: #f1f5f9; }
+    tr:hover { background: #e0e7ef; }
   </style>
 </head>
 <body>
-  <h1>Progress Tracker Admin</h1>
-  <table id="progressTable">
-    <thead>
-      <tr><th>User</th><th>Task</th><th>Progress</th><th>Date</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="container">
+    <h1>Progress Tracker Admin</h1>
+    <table id="progressTable">
+      <thead>
+        <tr><th>User</th><th>Task</th><th>Progress</th><th>Date</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
   <script>
     fetch('SCRIPT_WEB_APP_URL')
       .then(res => res.json())
