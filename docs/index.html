@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Progress Tracker</title>
   <style>
+    .action-btn {
+      background: #f1f5f9;
+      border: 1px solid #b6c2d1;
+      border-radius: 5px;
+      padding: 4px 10px;
+      margin: 0 2px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s;
+    }
+    .action-btn.edit { color: #2563eb; border-color: #2563eb; }
+    .action-btn.delete { color: #dc2626; border-color: #dc2626; }
+    .action-btn.edit:hover { background: #dbeafe; }
+    .action-btn.delete:hover { background: #fee2e2; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       margin: 2em;
@@ -41,6 +55,7 @@
       background: #2563eb;
       color: #fff;
       font-weight: 600;
+      text-align: center;
     }
     tr:nth-child(even) { background: #f1f5f9; }
     tr:hover { background: #e0e7ef; }
@@ -52,25 +67,72 @@
     <table id="progressTable">
       <thead>
         <tr><th>User</th><th>Task</th><th>Progress</th><th>Date</th></tr>
+        <th>Aksi</th>
       </thead>
       <tbody></tbody>
     </table>
   </div>
   <script>
-    fetch('SCRIPT_WEB_APP_URL')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.querySelector('#progressTable tbody');
-        data.slice(1).forEach(row => {
-          const tr = document.createElement('tr');
-          row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            tr.appendChild(td);
+    const API_URL = 'SCRIPT_WEB_APP_URL';
+    function loadTable() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#progressTable tbody');
+          tbody.innerHTML = '';
+          data.slice(1).forEach((row, idx) => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+              const td = document.createElement('td');
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            // Tombol aksi
+            const tdAksi = document.createElement('td');
+            // Edit
+            const btnEdit = document.createElement('button');
+            btnEdit.textContent = 'Edit';
+            btnEdit.className = 'action-btn edit';
+            btnEdit.onclick = function() {
+              const user = prompt('User:', row[0]);
+              const task = prompt('Task:', row[1]);
+              const progress = prompt('Progress:', row[2]);
+              if (user && task && progress) {
+                fetch(API_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    action: 'update',
+                    id: idx+1, // +1 karena header di index 0
+                    user, task, progress
+                  })
+                }).then(() => loadTable());
+              }
+            };
+            // Delete
+            const btnDelete = document.createElement('button');
+            btnDelete.textContent = 'Delete';
+            btnDelete.className = 'action-btn delete';
+            btnDelete.onclick = function() {
+              if (confirm('Hapus data ini?')) {
+                fetch(API_URL, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    action: 'delete',
+                    id: idx+1
+                  })
+                }).then(() => loadTable());
+              }
+            };
+            tdAksi.appendChild(btnEdit);
+            tdAksi.appendChild(btnDelete);
+            tr.appendChild(tdAksi);
+            tbody.appendChild(tr);
           });
-          tbody.appendChild(tr);
         });
-      });
+    }
+    loadTable();
   </script>
 </body>
 </html>

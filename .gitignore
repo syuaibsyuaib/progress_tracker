@@ -1,0 +1,103 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.idea/
+.vscode/
+*.iml
+
+# VS Code
+.history/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Android/iOS
+android/.gradle/
+android/app/build/
+android/local.properties
+android/.idea/
+android/.settings/
+android/.cxx/
+android/gradle/
+android/.gradle/
+android/build/
+android/.externalNativeBuild/
+android/.DS_Store
+android/.idea/
+android/.iml
+android/.project
+android/.classpath
+android/.settings/
+android/.externalNativeBuild/
+android/.cxx/
+android/.gradle/
+android/.idea/
+android/.iml
+android/.project
+android/.classpath
+android/.settings/
+android/.externalNativeBuild/
+android/.cxx/
+android/.gradle/
+android/.idea/
+android/.iml
+android/.project
+android/.classpath
+android/.settings/
+android/.externalNativeBuild/
+android/.cxx/
+
+# iOS
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/ephemeral/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/ephemeral/
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Misc
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.rej
+
+# Google Apps Script
+backend_gas/.clasp.json
+backend_gas/node_modules/
+backend_gas/.clasp-local.json
+backend_gas/.claspignore
+backend_gas/.vscode/
+backend_gas/.DS_Store
+backend_gas/.history/
+
+# Node
+node_modules/
+
+# Docs build
+/docs/.DS_Store
+/docs/.history/
