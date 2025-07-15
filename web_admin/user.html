@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Progress Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+    .form-group { margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Progress Tracker User</h1>
+  <form id="progressForm">
+    <div class="form-group">
+      <label>Nama User: <input type="text" id="user" required></label>
+    </div>
+    <div class="form-group">
+      <label>Task: <input type="text" id="task" required></label>
+    </div>
+    <div class="form-group">
+      <label>Progress: <input type="text" id="progress" required></label>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+  <h2>Progress Saya</h2>
+  <table id="progressTable">
+    <thead>
+      <tr><th>Task</th><th>Progress</th><th>Date</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    const API_URL = 'SCRIPT_WEB_APP_URL'; // Ganti dengan URL Web App Google Script Anda
+    const form = document.getElementById('progressForm');
+    const userInput = document.getElementById('user');
+    const taskInput = document.getElementById('task');
+    const progressInput = document.getElementById('progress');
+    const tbody = document.querySelector('#progressTable tbody');
+
+    function loadProgress(user) {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          tbody.innerHTML = '';
+          data.slice(1).filter(row => row[0] === user).forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td>`;
+            tbody.appendChild(tr);
+          });
+        });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = userInput.value.trim();
+      const task = taskInput.value.trim();
+      const progress = progressInput.value.trim();
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ user, task, progress }),
+        headers: { 'Content-Type': 'application/json' }
+      }).then(() => {
+        loadProgress(user);
+        taskInput.value = '';
+        progressInput.value = '';
+      });
+    });
+
+    userInput.addEventListener('change', function() {
+      if (userInput.value.trim()) {
+        loadProgress(userInput.value.trim());
+      }
+    });
+  </script>
+</body>
+</html>
