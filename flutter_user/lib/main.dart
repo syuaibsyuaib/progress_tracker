@@ -27,7 +27,7 @@ class ProgressWebView extends StatelessWidget {
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
-        Uri.parse('https://USERNAME.github.io/REPO_NAME/user.html'),
+        Uri.parse('https://syuaibsyuaib.github.io/progress_tracker/user.html'),
       ); // Ganti dengan URL user.html GitHub Pages Anda
 
     return Scaffold(

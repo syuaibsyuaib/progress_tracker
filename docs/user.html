@@ -5,34 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Progress Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
-    .form-group { margin-bottom: 1em; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 2em;
+      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+      color: #222;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2em 2em 1.5em 2em;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2563eb;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1em;
+      background: #f9fafb;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    th, td {
+      border: none;
+      padding: 12px 10px;
+      text-align: left;
+    }
+    th {
+      background: #2563eb;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:nth-child(even) { background: #f1f5f9; }
+    tr:hover { background: #e0e7ef; }
+    .form-group { margin-bottom: 1.2em; }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #b6c2d1;
+      border-radius: 6px;
+      font-size: 1em;
+      margin-top: 4px;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    input[type="text"]:focus {
+      border: 1.5px solid #2563eb;
+      outline: none;
+    }
+    button {
+      background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+      display: block;
+      width: 100%;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #1d4ed8 60%, #3b82f6 100%);
+      transform: translateY(-2px) scale(1.02);
+    }
   </style>
 </head>
 <body>
-  <h1>Progress Tracker User</h1>
-  <form id="progressForm">
-    <div class="form-group">
-      <label>Nama User: <input type="text" id="user" required></label>
-    </div>
-    <div class="form-group">
-      <label>Task: <input type="text" id="task" required></label>
-    </div>
-    <div class="form-group">
-      <label>Progress: <input type="text" id="progress" required></label>
-    </div>
-    <button type="submit">Submit</button>
-  </form>
-  <h2>Progress Saya</h2>
-  <table id="progressTable">
-    <thead>
-      <tr><th>Task</th><th>Progress</th><th>Date</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="container">
+    <h1>Progress Tracker User</h1>
+    <form id="progressForm">
+      <div class="form-group">
+        <label>Nama User
+          <input type="text" id="user" required placeholder="Masukkan nama Anda">
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Task
+          <input type="text" id="task" required placeholder="Masukkan nama tugas">
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Progress
+          <input type="text" id="progress" required placeholder="Deskripsi progress">
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <h2>Progress Saya</h2>
+    <table id="progressTable">
+      <thead>
+        <tr><th>Task</th><th>Progress</th><th>Date</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
   <script>
     const API_URL = 'SCRIPT_WEB_APP_URL'; // Ganti dengan URL Web App Google Script Anda
     const form = document.getElementById('progressForm');
