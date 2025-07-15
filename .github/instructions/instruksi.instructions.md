@@ -8,6 +8,8 @@ This project is a Flutter application that tracks user progress. It includes bot
 The backend is implemented using Google Apps Script, which interacts with a Google Spreadsheet to store and retrieve user progress data. The application allows users to input their progress and view it in a structured format.
 The project also includes a GitHub repository for version control and collaboration.
 user interface is built using Flutter webview where url for user is https://syuaibsyuaib.github.io/progress_tracker/user.html
+- nama sheet progres: `progres`
+- nama sheet user: `user`
 
 # Coding Guidelines
 1. **Code Structure**: Organize code into modules and components for better maintainability.
@@ -54,3 +56,7 @@ The model for the user entries includes the following columns:
 - Implement error handling for network requests.
 - Write unit tests for all new features and bug fixes.
 - auto commit and push changes to the repository after completing tasks.
+- gunakan bahasa Indonesia untuk komentar dan dokumentasi kode.
+- gunakan best practices dalam penulisan kode
+- gunakan prinsip desain UI/UX yang professional dan responsif
+- gunakan bahasa indonesia jika bercakap dengan developer.

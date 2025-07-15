@@ -1,6 +1,10 @@
 // Fungsi test untuk Google Apps Script
 function testProgressTracker() {
-  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('Progress');
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
+  if (!sheet) {
+    Logger.log('Sheet "Progress" tidak ditemukan. Pastikan sheet sudah ada.');
+    return;
+  }
   Logger.log('Jumlah baris: ' + sheet.getLastRow());
   // Test create
   var createParams = {
@@ -53,6 +57,7 @@ function testProgressTracker() {
     Logger.log('Setelah delete, jumlah baris: ' + sheet.getLastRow());
   }
 }
+
 // Google Apps Script untuk Progress Tracker
 // File: Code.gs
 
@@ -62,7 +67,7 @@ defaultSpreadsheetId = '1GytHkptBkFUzEqul7EmJIH07bEeMastwsZM_DXrVQVM';
 
 
 function doGet(e) {
-  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('Progress');
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
   var data = sheet.getDataRange().getValues();
   // Jika ada parameter id, ambil data tertentu
   if (e && e.parameter && e.parameter.id) {
@@ -78,7 +83,7 @@ function doGet(e) {
 
 
 function doPost(e) {
-  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('Progress');
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
   var params = JSON.parse(e.postData.contents);
   var action = params.action || 'create';
 
@@ -127,5 +132,47 @@ function doPost(e) {
     }
   }
 
+  if (action === 'validateLogin') {
+    return validateLogin(params);
+  }
+
   return ContentService.createTextOutput('Unknown action').setMimeType(ContentService.MimeType.TEXT);
+}
+
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Tambah Akun')
+    .addItem('Form Tambah Akun', 'showAddAccountForm')
+    .addToUi();
+}
+
+function showAddAccountForm() {
+  var html = HtmlService.createHtmlOutputFromFile('AddAccountForm')
+    .setWidth(400)
+    .setHeight(300);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Tambah Akun');
+}
+
+function addAccount(data) {
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('user');
+  if (!sheet) {
+    throw new Error('Sheet "user" tidak ditemukan.');
+  }
+  sheet.appendRow([data.id, data.username, data.password, data.nip, data.nama, data.role]);
+}
+
+function validateLogin(data) {
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('user');
+  if (!sheet) {
+    throw new Error('Sheet "user" tidak ditemukan.');
+  }
+
+  var dataRange = sheet.getDataRange().getValues();
+  for (var i = 1; i < dataRange.length; i++) {
+    var row = dataRange[i];
+    if (row[1] === data.username && row[2] === data.password) {
+      return ContentService.createTextOutput('true').setMimeType(ContentService.MimeType.TEXT);
+    }
+  }
+  return ContentService.createTextOutput('false').setMimeType(ContentService.MimeType.TEXT);
 }

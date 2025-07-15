@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background-color: #f9f9f9;
+      }
+      .form-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      form {
+        display: grid;
+        gap: 15px;
+      }
+      label {
+        font-weight: bold;
+      }
+      input, select {
+        max-width: 90%;
+      }
+      input, select, button {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+      }
+      button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+
+      /* Media Queries for Responsive Design */
+      @media (max-width: 480px) {
+        .form-container {
+          padding: 15px;
+        }
+        input, select, button {
+          padding: 8px;
+          font-size: 13px;
+        }
+        button {
+          font-size: 15px;
+        }
+      }
+
+      @media (min-width: 481px) and (max-width: 768px) {
+        .form-container {
+          padding: 18px;
+        }
+        input, select, button {
+          padding: 9px;
+          font-size: 14px;
+        }
+        button {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <form id="addAccountForm">
+        <!-- Removed ID input field -->
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="nip">NIP:</label>
+        <input type="text" id="nip" name="nip" required>
+
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" required>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+
+        <button type="button" onclick="submitForm()">Tambah Akun</button>
+      </form>
+    </div>
+
+    <script>
+      function submitForm() {
+        const formData = new FormData(document.getElementById('addAccountForm'));
+        const data = {};
+        formData.forEach((value, key) => {
+          data[key] = value;
+        });
+
+        // Generate ID automatically
+        data.id = Date.now().toString();
+
+        google.script.run.addAccount(data);
+        google.script.host.close();
+      }
+    </script>
+  </body>
+</html>
