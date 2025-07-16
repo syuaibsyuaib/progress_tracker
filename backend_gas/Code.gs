@@ -67,48 +67,63 @@ defaultSpreadsheetId = '1GytHkptBkFUzEqul7EmJIH07bEeMastwsZM_DXrVQVM';
 
 
 function doGet(e) {
+  var action = e.parameter.action;
   var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
-  var data = sheet.getDataRange().getValues();
-  // Jika ada parameter id, ambil data tertentu
-  if (e && e.parameter && e.parameter.id) {
-    var id = parseInt(e.parameter.id);
-    if (!isNaN(id) && id > 0 && id < data.length) {
-      return ContentService.createTextOutput(JSON.stringify(data[id])).setMimeType(ContentService.MimeType.JSON);
-    } else {
-      return ContentService.createTextOutput(JSON.stringify({error: 'ID not found'})).setMimeType(ContentService.MimeType.JSON);
-    }
+  
+  if (action === 'getUserProgress') {
+    var nama = e.parameter.nama;
+    var data = sheet.getDataRange().getValues();
+    var headers = data.shift(); // Ambil header
+    var namaColumnIndex = headers.indexOf('NAMA');
+
+    var result = data.filter(function(row) {
+      return row[namaColumnIndex] === nama;
+    }).map(function(row) {
+      var rowObject = {};
+      headers.forEach(function(header, index) {
+        rowObject[header] = row[index];
+      });
+      return rowObject;
+    }).sort(function(a, b) {
+      return new Date(b.TANGGAL) - new Date(a.TANGGAL); // Urutkan dari terbaru
+    });
+
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
   }
+
+  // Fallback untuk fungsionalitas get yang sudah ada
+  var data = sheet.getDataRange().getValues();
   return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
 
 
 function doPost(e) {
-  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
   var params = JSON.parse(e.postData.contents);
   var action = params.action || 'create';
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('progres');
 
   // Model kolom: NOMOR, ID, ID_USER, ID_PROGRES, ID_KATEGORI, NIP, NAMA, TANGGAL, KINERJA, BOBOT, STATUS, KETERANGAN
 
-  if (action === 'create') {
+  if (action === 'addProgress') {
     var lastRow = sheet.getLastRow();
-    var nomor = lastRow; // baris ke berapa (header di baris 1)
-    var id = Utilities.getUuid();
-    var id_user = params.id_user || '';
-    var id_progres = params.id_progres || '';
-    var id_kategori = params.id_kategori || '';
-    var nip = params.nip || '';
-    var nama = params.nama || '';
-    var tanggal = params.tanggal || new Date();
-    var kinerja = params.kinerja || '';
-    var bobot = params.bobot || '';
-    var status = params.status || '';
-    var keterangan = params.keterangan || '';
-    sheet.appendRow([
-      nomor, id, id_user, id_progres, id_kategori, nip, nama, tanggal, kinerja, bobot, status, keterangan
-    ]);
-    return ContentService.createTextOutput('Created').setMimeType(ContentService.MimeType.TEXT);
+    var newRow = [
+      lastRow, // NOMOR
+      Utilities.getUuid(), // ID
+      params.ID_USER || '', // ID_USER
+      params.ID_PROGRES || '', // ID_PROGRES
+      params.ID_KATEGORI || '', // ID_KATEGORI
+      params.NIP || '', // NIP
+      params.NAMA || '', // NAMA
+      new Date(), // TANGGAL
+      params.KINERJA || '', // KINERJA
+      params.BOBOT || '', // BOBOT
+      'Dalam Proses', // STATUS (default)
+      params.KETERANGAN || '' // KETERANGAN
+    ];
+    sheet.appendRow(newRow);
+    return ContentService.createTextOutput(JSON.stringify({result: 'success'})).setMimeType(ContentService.MimeType.JSON);
   }
-
+  
   if (action === 'update') {
     // params.id = index baris (mulai dari 1, baris 1 = header)
     var rowIdx = parseInt(params.rowIdx); // rowIdx = baris data (mulai dari 2)
@@ -136,7 +151,7 @@ function doPost(e) {
     return validateLogin(params);
   }
 
-  return ContentService.createTextOutput('Unknown action').setMimeType(ContentService.MimeType.TEXT);
+  return ContentService.createTextOutput(JSON.stringify({result: 'error', message: 'Unknown action'})).setMimeType(ContentService.MimeType.JSON);
 }
 
 function onOpen() {
@@ -164,17 +179,32 @@ function addAccount(data) {
 function validateLogin(data) {
   var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('user');
   if (!sheet) {
-    throw new Error('Sheet "user" tidak ditemukan.');
+    return ContentService.createTextOutput(JSON.stringify({success: false, message: 'Sheet "user" tidak ditemukan.'})).setMimeType(ContentService.MimeType.JSON);
   }
 
   var dataRange = sheet.getDataRange().getValues();
-  for (var i = 1; i < dataRange.length; i++) {
+  var headers = dataRange.shift(); // Ambil header
+  
+  for (var i = 0; i < dataRange.length; i++) {
     var row = dataRange[i];
-    if (row[1] === data.username && row[2] === data.password) {
-      return ContentService.createTextOutput('true').setMimeType(ContentService.MimeType.TEXT);
+    var user = {};
+    headers.forEach(function(header, index) {
+      user[header] = row[index];
+    });
+
+    if (user.USERNAME === data.username && user.PASSWORD === data.password) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        user: {
+          nama: user.NAMA,
+          nip: user.NIP,
+          role: user.ROLE
+        }
+      })).setMimeType(ContentService.MimeType.JSON);
     }
   }
-  return ContentService.createTextOutput('false').setMimeType(ContentService.MimeType.TEXT);
+  
+  return ContentService.createTextOutput(JSON.stringify({success: false, message: 'Invalid credentials'})).setMimeType(ContentService.MimeType.JSON);
 }
 
 function populateDummyData() {

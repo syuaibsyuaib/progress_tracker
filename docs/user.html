@@ -28,7 +28,7 @@
       min-height: 100vh;
     }
     .container {
-      max-width: 600px;
+      max-width: 800px; /* Lebarkan container */
       width: 100%;
       background: var(--card-background);
       border-radius: 20px;
@@ -87,6 +87,11 @@
     }
     td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
     td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5em;
+    }
     .form-group {
       margin-bottom: 1.5em;
       position: relative;
@@ -97,7 +102,7 @@
       display: block;
       margin-bottom: 8px;
     }
-    input[type="text"] {
+    input[type="text"], input[type="number"], textarea, select {
       width: 100%;
       padding: 12px 15px;
       border: 1px solid #dce4ec;
@@ -108,7 +113,11 @@
       transition: all 0.2s ease;
       background-color: #f9fafb;
     }
-    input[type="text"]:focus {
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
       outline: none;
@@ -142,27 +151,50 @@
       font-style: italic;
       color: #777;
     }
+    .user-info {
+      text-align: center;
+      margin-bottom: 2em;
+      padding-bottom: 1.5em;
+      border-bottom: 1px solid #eef2f5;
+    }
+    .user-info h1 { margin-bottom: 0.1em; }
+    .user-info p {
+      color: #777;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>User Progress</h1>
+    <div class="user-info">
+      <h1 id="nama-display">Memuat...</h1>
+      <p id="nip-display"></p>
+    </div>
+    
     <form id="progressForm">
-      <div class="form-group">
-        <label for="nama">Nama User</label>
-        <input type="text" id="nama" required placeholder="Masukkan nama lengkap Anda">
+      <h2>Tambah Progress Baru</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="kinerja">Kinerja</label>
+          <input type="text" id="kinerja" required placeholder="Deskripsi tugas">
+        </div>
+        <div class="form-group">
+          <label for="bobot">Bobot</label>
+          <input type="number" id="bobot" placeholder="Contoh: 10">
+        </div>
       </div>
       <div class="form-group">
-        <label for="kinerja">Kinerja</label>
-        <input type="text" id="kinerja" required placeholder="Deskripsikan kinerja atau tugas Anda">
+        <label for="keterangan">Keterangan</label>
+        <textarea id="keterangan" placeholder="Detail atau catatan tambahan"></textarea>
       </div>
       <button type="submit">Submit Progress</button>
     </form>
-    <div id="userProgressSection" style="display: none;">
-      <h2>Progress Saya</h2>
+
+    <div id="userProgressSection">
+      <h2>Riwayat Progress</h2>
       <table id="progressTable">
         <thead>
-          <tr><th>Tanggal</th><th>Kinerja</th><th>Status</th></tr>
+          <tr><th>Tanggal</th><th>Kinerja</th><th>Bobot</th><th>Status</th><th>Keterangan</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -174,11 +206,27 @@
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbxlZW3AxOBaTcPlZCNgFZaI4fMS4nDh2ESv7ujRkDLPz9AZxhNwLduQkbV2YP4iQ3pImw/exec';
     const form = document.getElementById('progressForm');
-    const namaInput = document.getElementById('nama');
     const kinerjaInput = document.getElementById('kinerja');
+    const bobotInput = document.getElementById('bobot');
+    const keteranganInput = document.getElementById('keterangan');
     const tbody = document.querySelector('#progressTable tbody');
     const loader = document.getElementById('loader');
-    const userProgressSection = document.getElementById('userProgressSection');
+    
+    let currentNama = '';
+    let currentNip = '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentNama = urlParams.get('nama') || '';
+      currentNip = urlParams.get('nip') || '';
+
+      document.getElementById('nama-display').textContent = currentNama || 'Nama Tidak Ditemukan';
+      document.getElementById('nip-display').textContent = `NIP: ${currentNip}` || 'NIP Tidak Ditemukan';
+
+      if (currentNama) {
+        loadProgress(currentNama);
+      }
+    });
 
     function showLoader(show) {
       loader.style.display = show ? 'block' : 'none';
@@ -186,7 +234,6 @@
 
     function loadProgress(nama) {
       if (!nama) return;
-      userProgressSection.style.display = 'block';
       showLoader(true);
       tbody.innerHTML = '';
 
@@ -194,41 +241,38 @@
         .then(res => res.json())
         .then(data => {
           showLoader(false);
-          if (data.error) {
-            throw new Error(data.error);
-          }
+          if (data.error) throw new Error(data.error);
           if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada progress yang dicatat.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada progress yang dicatat.</td></tr>';
             return;
           }
           data.forEach(row => {
             const tr = document.createElement('tr');
-            // Asumsi urutan kolom: TANGGAL, KINERJA, STATUS
-            const tanggal = new Date(row.TANGGAL).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-            tr.innerHTML = `<td>${tanggal}</td><td>${row.KINERJA}</td><td>${row.STATUS}</td>`;
+            const tanggal = new Date(row.TANGGAL).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            tr.innerHTML = `<td>${tanggal}</td><td>${row.KINERJA || ''}</td><td>${row.BOBOT || ''}</td><td>${row.STATUS || ''}</td><td>${row.KETERANGAN || ''}</td>`;
             tbody.appendChild(tr);
           });
         })
         .catch(error => {
           showLoader(false);
-          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Gagal memuat data: ${error.message}</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Gagal memuat data: ${error.message}</td></tr>`;
           console.error('Error loading progress:', error);
         });
     }
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const nama = namaInput.value.trim();
-      const kinerja = kinerjaInput.value.trim();
       const button = e.target.querySelector('button');
       button.disabled = true;
       button.textContent = 'Mengirim...';
 
       const payload = {
         action: 'addProgress',
-        NAMA: nama,
-        KINERJA: kinerja,
-        TANGGAL: new Date().toISOString()
+        NAMA: currentNama,
+        NIP: currentNip,
+        KINERJA: kinerjaInput.value.trim(),
+        BOBOT: bobotInput.value.trim(),
+        KETERANGAN: keteranganInput.value.trim(),
       };
 
       fetch(API_URL, {
@@ -239,8 +283,8 @@
       .then(res => res.json())
       .then(data => {
         if (data.result === 'success') {
-          loadProgress(nama);
-          kinerjaInput.value = '';
+          loadProgress(currentNama);
+          form.reset(); // Reset form fields
         } else {
           throw new Error(data.message || 'Gagal mengirim data.');
         }
@@ -253,19 +297,6 @@
         button.disabled = false;
         button.textContent = 'Submit Progress';
       });
-    });
-
-    let debounceTimer;
-    namaInput.addEventListener('input', function() {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        const nama = namaInput.value.trim();
-        if (nama) {
-          loadProgress(nama);
-        } else {
-          userProgressSection.style.display = 'none';
-        }
-      }, 500);
     });
   </script>
 </body>

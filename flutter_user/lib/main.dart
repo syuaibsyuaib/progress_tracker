@@ -246,22 +246,28 @@ class _LoginScreenState extends State<LoginScreen>
     return ElevatedButton(
       onPressed: () async {
         setState(() => isLoading = true);
-        final response = await validateLogin(
+        final result = await validateLogin(
           usernameController.text,
           passwordController.text,
         );
         if (!mounted) return;
         setState(() => isLoading = false);
 
-        if (response) {
+        if (result['success'] == true) {
+          final user = result['user'];
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const ProgressWebView()),
+            MaterialPageRoute(
+              builder: (_) =>
+                  ProgressWebView(nama: user['nama'], nip: user['nip']),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Username atau password salah.'),
+            SnackBar(
+              content: Text(
+                result['message'] ?? 'Username atau password salah.',
+              ),
               backgroundColor: Colors.redAccent,
             ),
           );
@@ -282,7 +288,10 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Future<bool> validateLogin(String username, String password) async {
+  Future<Map<String, dynamic>> validateLogin(
+    String username,
+    String password,
+  ) async {
     try {
       final client = HttpClient();
       final request = await client.postUrl(
@@ -291,7 +300,7 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       );
 
-      request.followRedirects = false; // Disable automatic redirects
+      request.followRedirects = false;
       request.headers.set('Content-Type', 'application/json');
       request.write(
         jsonEncode({
@@ -302,44 +311,40 @@ class _LoginScreenState extends State<LoginScreen>
       );
 
       final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
 
-      if (response.statusCode == HttpStatus.movedTemporarily ||
-          response.statusCode == HttpStatus.found) {
-        // Handle redirect manually
+      if (response.statusCode == 302) {
+        // Handle redirect
         final location = response.headers.value(HttpHeaders.locationHeader);
         if (location != null) {
           final redirectRequest = await client.getUrl(Uri.parse(location));
           final redirectResponse = await redirectRequest.close();
-          final responseBody = await redirectResponse
+          final redirectBody = await redirectResponse
               .transform(utf8.decoder)
               .join();
+          return jsonDecode(redirectBody);
+        }
+      }
 
-          if (redirectResponse.statusCode == 200) {
-            return responseBody == 'true';
-          } else {
-            print(
-              'Error: ${redirectResponse.statusCode}, Response: $responseBody',
-            );
-          }
-        }
+      if (response.statusCode == 200) {
+        return jsonDecode(responseBody);
       } else {
-        final responseBody = await response.transform(utf8.decoder).join();
-        if (response.statusCode == 200) {
-          return responseBody == 'true';
-        } else {
-          print('Error: ${response.statusCode}, Response: $responseBody');
-        }
+        print('Error: ${response.statusCode}, Response: $responseBody');
       }
     } catch (e) {
       print('Exception: $e');
     }
 
-    return false;
+    return {'success': false, 'message': 'Terjadi kesalahan jaringan.'};
   }
 }
 
 class ProgressWebView extends StatefulWidget {
-  const ProgressWebView({Key? key}) : super(key: key);
+  final String nama;
+  final String nip;
+
+  const ProgressWebView({Key? key, required this.nama, required this.nip})
+    : super(key: key);
 
   @override
   State<ProgressWebView> createState() => _ProgressWebViewState();
@@ -347,22 +352,41 @@ class ProgressWebView extends StatefulWidget {
 
 class _ProgressWebViewState extends State<ProgressWebView> {
   late final WebViewController _controller;
+  late final String _url;
 
   @override
   void initState() {
     super.initState();
+    _url =
+        'https://syuaibsyuaib.github.io/progress_tracker/user.html?nama=${Uri.encodeComponent(widget.nama)}&nip=${Uri.encodeComponent(widget.nip)}';
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        Uri.parse('https://syuaibsyuaib.github.io/progress_tracker/user.html'),
-      );
+      ..loadRequest(Uri.parse(_url));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Progress Tracker'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Progress Tracker', style: TextStyle(fontSize: 18)),
+            Text(
+              widget.nama,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+            ),
+          ],
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3A7BD5), Color(0xFF00D2FF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
