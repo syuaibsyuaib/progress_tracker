@@ -176,3 +176,20 @@ function validateLogin(data) {
   }
   return ContentService.createTextOutput('false').setMimeType(ContentService.MimeType.TEXT);
 }
+
+function populateDummyData() {
+  var sheet = SpreadsheetApp.openById(defaultSpreadsheetId).getSheetByName('user');
+  if (!sheet) {
+    throw new Error('Sheet "user" tidak ditemukan.');
+  }
+
+  var dummyData = [
+    ['1', 'admin', 'admin123', '123456', 'Admin User', 'admin'],
+    ['2', 'user1', 'password1', '654321', 'User One', 'user'],
+    ['3', 'user2', 'password2', '789012', 'User Two', 'user']
+  ];
+
+  dummyData.forEach(function(row) {
+    sheet.appendRow(row);
+  });
+}

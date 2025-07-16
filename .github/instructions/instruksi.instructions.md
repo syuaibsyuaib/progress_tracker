@@ -58,5 +58,6 @@ The model for the user entries includes the following columns:
 - auto commit and push changes to the repository after completing tasks.
 - gunakan bahasa Indonesia untuk komentar dan dokumentasi kode.
 - gunakan best practices dalam penulisan kode
-- gunakan prinsip desain UI/UX yang professional dan responsif
-- gunakan bahasa indonesia jika bercakap dengan developer.
+- gunakan prinsip desain UI/UX yang professional, moderen, dan responsif
+- gunakan bahasa indonesia jika bercakap dengan developer
+- kamu harus kreatif dan inovatif.

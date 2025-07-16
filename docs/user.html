@@ -1,155 +1,271 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Progress Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #3A7BD5;
+      --secondary-color: #00D2FF;
+      --background-color: #f4f7f9;
+      --text-color: #333;
+      --card-background: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+    }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 2em;
-      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
-      color: #222;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 2em;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
     .container {
-      max-width: 500px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 2em 2em 1.5em 2em;
+      max-width: 600px;
+      width: 100%;
+      background: var(--card-background);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      padding: 2.5em;
+      transition: all 0.3s ease;
+    }
+    @media (max-width: 640px) {
+      body { padding: 1em; }
+      .container { padding: 1.5em; }
     }
     h1, h2 {
       text-align: center;
-      color: #2563eb;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 0.2em;
+    }
+    h2 {
+      font-size: 1.8em;
+      margin-top: 1.5em;
+      border-top: 1px solid #eef2f5;
+      padding-top: 1em;
     }
     table {
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0 10px;
       width: 100%;
       margin-top: 1em;
-      background: #f9fafb;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     th, td {
-      border: none;
-      padding: 12px 10px;
+      padding: 15px;
       text-align: left;
+      vertical-align: middle;
     }
     th {
-      background: #2563eb;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
       color: #fff;
       font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85em;
     }
-    tr:nth-child(even) { background: #f1f5f9; }
-    tr:hover { background: #e0e7ef; }
-    .form-group { margin-bottom: 1.2em; }
+    th:first-child { border-top-left-radius: 10px; }
+    th:last-child { border-top-right-radius: 10px; }
+    tr {
+      background: #fcfdff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    tr:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+    }
+    td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+    td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+    .form-group {
+      margin-bottom: 1.5em;
+      position: relative;
+    }
+    label {
+      font-weight: 600;
+      color: #555;
+      display: block;
+      margin-bottom: 8px;
+    }
     input[type="text"] {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #b6c2d1;
-      border-radius: 6px;
+      padding: 12px 15px;
+      border: 1px solid #dce4ec;
+      border-radius: 8px;
       font-size: 1em;
-      margin-top: 4px;
+      font-family: 'Poppins', sans-serif;
       box-sizing: border-box;
-      transition: border 0.2s;
+      transition: all 0.2s ease;
+      background-color: #f9fafb;
     }
     input[type="text"]:focus {
-      border: 1.5px solid #2563eb;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
       outline: none;
     }
     button {
-      background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
       color: #fff;
       border: none;
-      border-radius: 6px;
-      padding: 10px 24px;
-      font-size: 1em;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 1.1em;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+      transition: all 0.3s ease;
       margin-top: 8px;
       display: block;
       width: 100%;
+      font-family: 'Poppins', sans-serif;
     }
     button:hover {
-      background: linear-gradient(90deg, #1d4ed8 60%, #3b82f6 100%);
-      transform: translateY(-2px) scale(1.02);
+      transform: translateY(-3px);
+      box-shadow: 0 7px 20px rgba(58, 123, 213, 0.4);
+    }
+    .loader {
+      text-align: center;
+      padding: 20px;
+      display: none;
+    }
+    .loader p {
+      font-style: italic;
+      color: #777;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Progress Tracker User</h1>
+    <h1>User Progress</h1>
     <form id="progressForm">
       <div class="form-group">
-        <label>Nama User
-          <input type="text" id="user" required placeholder="Masukkan nama Anda">
-        </label>
+        <label for="nama">Nama User</label>
+        <input type="text" id="nama" required placeholder="Masukkan nama lengkap Anda">
       </div>
       <div class="form-group">
-        <label>Task
-          <input type="text" id="task" required placeholder="Masukkan nama tugas">
-        </label>
+        <label for="kinerja">Kinerja</label>
+        <input type="text" id="kinerja" required placeholder="Deskripsikan kinerja atau tugas Anda">
       </div>
-      <div class="form-group">
-        <label>Progress
-          <input type="text" id="progress" required placeholder="Deskripsi progress">
-        </label>
-      </div>
-      <button type="submit">Submit</button>
+      <button type="submit">Submit Progress</button>
     </form>
-    <h2>Progress Saya</h2>
-    <table id="progressTable">
-      <thead>
-        <tr><th>Task</th><th>Progress</th><th>Date</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div id="userProgressSection" style="display: none;">
+      <h2>Progress Saya</h2>
+      <table id="progressTable">
+        <thead>
+          <tr><th>Tanggal</th><th>Kinerja</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="loader" id="loader">
+        <p>Memuat data...</p>
+      </div>
+    </div>
   </div>
   <script>
-    const API_URL = 'SCRIPT_WEB_APP_URL'; // Ganti dengan URL Web App Google Script Anda
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxlZW3AxOBaTcPlZCNgFZaI4fMS4nDh2ESv7ujRkDLPz9AZxhNwLduQkbV2YP4iQ3pImw/exec';
     const form = document.getElementById('progressForm');
-    const userInput = document.getElementById('user');
-    const taskInput = document.getElementById('task');
-    const progressInput = document.getElementById('progress');
+    const namaInput = document.getElementById('nama');
+    const kinerjaInput = document.getElementById('kinerja');
     const tbody = document.querySelector('#progressTable tbody');
+    const loader = document.getElementById('loader');
+    const userProgressSection = document.getElementById('userProgressSection');
 
-    function loadProgress(user) {
-      fetch(API_URL)
+    function showLoader(show) {
+      loader.style.display = show ? 'block' : 'none';
+    }
+
+    function loadProgress(nama) {
+      if (!nama) return;
+      userProgressSection.style.display = 'block';
+      showLoader(true);
+      tbody.innerHTML = '';
+
+      fetch(`${API_URL}?action=getUserProgress&nama=${encodeURIComponent(nama)}`)
         .then(res => res.json())
         .then(data => {
-          tbody.innerHTML = '';
-          data.slice(1).filter(row => row[0] === user).forEach(row => {
+          showLoader(false);
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada progress yang dicatat.</td></tr>';
+            return;
+          }
+          data.forEach(row => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td>`;
+            // Asumsi urutan kolom: TANGGAL, KINERJA, STATUS
+            const tanggal = new Date(row.TANGGAL).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            tr.innerHTML = `<td>${tanggal}</td><td>${row.KINERJA}</td><td>${row.STATUS}</td>`;
             tbody.appendChild(tr);
           });
+        })
+        .catch(error => {
+          showLoader(false);
+          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Gagal memuat data: ${error.message}</td></tr>`;
+          console.error('Error loading progress:', error);
         });
     }
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const user = userInput.value.trim();
-      const task = taskInput.value.trim();
-      const progress = progressInput.value.trim();
+      const nama = namaInput.value.trim();
+      const kinerja = kinerjaInput.value.trim();
+      const button = e.target.querySelector('button');
+      button.disabled = true;
+      button.textContent = 'Mengirim...';
+
+      const payload = {
+        action: 'addProgress',
+        NAMA: nama,
+        KINERJA: kinerja,
+        TANGGAL: new Date().toISOString()
+      };
+
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ user, task, progress }),
+        body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' }
-      }).then(() => {
-        loadProgress(user);
-        taskInput.value = '';
-        progressInput.value = '';
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result === 'success') {
+          loadProgress(nama);
+          kinerjaInput.value = '';
+        } else {
+          throw new Error(data.message || 'Gagal mengirim data.');
+        }
+      })
+      .catch(error => {
+        alert(`Terjadi kesalahan: ${error.message}`);
+        console.error('Error submitting progress:', error);
+      })
+      .finally(() => {
+        button.disabled = false;
+        button.textContent = 'Submit Progress';
       });
     });
 
-    userInput.addEventListener('change', function() {
-      if (userInput.value.trim()) {
-        loadProgress(userInput.value.trim());
-      }
+    let debounceTimer;
+    namaInput.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const nama = namaInput.value.trim();
+        if (nama) {
+          loadProgress(nama);
+        } else {
+          userProgressSection.style.display = 'none';
+        }
+      }, 500);
     });
   </script>
 </body>
